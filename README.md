@@ -13,11 +13,15 @@ such as the day of the week, month of the year or city that they want summary st
 
 ### Files used
 The files for the project can be accessed from these links
+
 For the city of Chicago data https://www.divvybikes.com/system-data
+
 For Washington data https://www.capitalbikeshare.com/system-data
+
 For New York city https://www.citibikenyc.com/system-data
 
 ### Credits
 The project was inspired by Motivate a company that keeps bike sharing data patterns and information
 For further information their website is below.
+
 https://www.motivateco.com/
