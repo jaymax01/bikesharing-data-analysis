@@ -1,9 +1,9 @@
 '''
 Project Overview
 
-The project will make use of Python to explore data related to bike share systems 
-for three major cities in the United States—Chicago, New York City, and Washington. 
-The following code will be used to import the data and answer interesting questions about it by computing descriptive statistics. 
+The project will make use of Python to explore data related to bike share systems
+for three major cities in the United States—Chicago, New York City, and Washington.
+The following code will be used to import the data and answer interesting questions about it by computing descriptive statistics.
 Also scripts will take in raw input to create an interactive experience in the terminal to present these statistics.
 
 '''
@@ -27,10 +27,10 @@ def get_filters():
         (str) day - name of the day of week to filter by, or "all" to apply no day filter
     """
     print('Hello! Let\'s explore some US bikeshare data!')
-    
+
     # Get user input for city (chicago, new york city, washington)
-    city_list = ['chicago', 'new york city', 'washington']    
-        
+    city_list = ['chicago', 'new york city', 'washington']
+
     city = input('Please enter a city chicago, new york city or washington').strip().lower()
     if city in city_list:
         print('We will calculate statistics of bikeshare data for '+ city)
@@ -40,18 +40,18 @@ def get_filters():
 
     # Get user input for month (all, january, february, ... , june)
     months_list = ['all', 'january', 'february', 'march', 'april', 'may', 'june']
-        
+
     month = input("Please enter a month from january to june or 'all' for all months").strip().lower()
     if month in months_list:
         print('Summary statistics will be displayed for the month of '+ month)
     else:
         while month not in months_list:
-            month = input('Please enter a valid month').strip().lower()        
-    
+            month = input('Please enter a valid month').strip().lower()
+
 
     # Get user input for day of week (all, monday, tuesday, ... sunday)
     day_of_week = ['all', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-    
+
     day = input("Please enter a day from monday to sunday or 'all' for all days").strip().lower()
     if day in day_of_week:
         print('Summary statistics will be displayed for '+ day)
@@ -75,43 +75,32 @@ def load_data(city, month, day):
         df - Pandas DataFrame containing city data filtered by month and day
     """
     df = pd.read_csv(CITY_DATA[city])
-    
-    # Display rows of data to the user
-    index = 0    
-    while index <= len(df):
-        rows = input('Enter yes or no if you want to see 5 rows of the '+ city + ' dataset?').strip().lower()
-        if rows == 'yes':
-           print(df[index:index+5])
-           index += 5
-        else:
-            break
 
-    
-    # Creating important columns
+        # Creating important columns
     df['Start Time'] = pd.to_datetime(df['Start Time'])
-    df['month'] = df['Start Time'].dt.month 
-    df['day_of_week'] = df['Start Time'].dt.weekday_name
+    df['month'] = df['Start Time'].dt.month
+    df['day_of_week'] = df['Start Time'].dt.day_name()
     df['hour'] = df['Start Time'].dt.hour
     df['start end trip'] = df['Start Station'] + ' and ' + df['End Station']
-    
+
     # Replacing NaN values
     df['User Type'] = df['User Type'].fillna(df['User Type'].mode()[0])
-    
+
     if city != 'washington':
         df['Gender'] = df['Gender'].fillna(df['Gender'].mode()[0])
         df['Birth Year'] = df['Birth Year'].fillna(df['Birth Year'].mode()[0])
-    
-    # Filtering by month    
+
+    # Filtering by month
     if month != 'all':
         months = ['january', 'february', 'march', 'april', 'may', 'june']
         month = months.index(month) + 1
-        
+
         df = df[df['month'] == month]
-    
-    # Filtering by day    
+
+    # Filtering by day
     if day != 'all':
         df = df[df['day_of_week'] == day.title()]
-        
+
     return df
 
 
@@ -155,7 +144,7 @@ def station_stats(df):
 
 def trip_duration_stats(df):
     """Displays statistics on the total and average trip duration."""
-    
+
     print('\nCalculating Trip Duration...\n')
     start_time = time.time()
 
@@ -189,16 +178,28 @@ def user_stats(df):
         earliest = df['Birth Year'].min()
         recent = df['Birth Year'].max()
         common = df['Birth Year'].mode()[0]
-    
+
         print('The earliest year of birth is ', earliest)
         print('The most recent year of birth is ', recent)
         print('The common year of birth is ', common)
     else:
         print('There are no birth year statitics for washington')
-    
-    
+
+
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
+
+def show_rows(df, city):
+    index = 0
+    while index <= len(df):
+        rows = input('Enter yes or no if you want to see 5 rows of the '+ city + ' dataset?').strip().lower()
+        if rows == 'yes':
+           print(df[index:index+5])
+           index += 5
+        else:
+            break
+
+    return df
 
 
 def main():
@@ -210,6 +211,7 @@ def main():
         station_stats(df)
         trip_duration_stats(df)
         user_stats(df)
+        show_rows(df, city)
 
         restart = input('\nWould you like to restart? Enter yes or no.\n')
         if restart.lower() != 'yes':
